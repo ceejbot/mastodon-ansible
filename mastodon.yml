@@ -1,0 +1,57 @@
+---
+- hosts: general
+  remote_user: ubuntu
+  tasks:
+    - include_vars: vars.yml
+    - name: create live dir
+      become: true
+      file:
+        path: "{{install_dir}}/live"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+    - name: clone the repo
+      git: >
+        repo=https://github.com/Gargron/mastodon.git
+        dest="{{install_dir}}/live"
+        update=yes
+        accept_hostkey=true
+    - name: install bundler deps
+      command: bundle install --deployment --without development test chdir="{{install_dir}}/live"
+    - name: install npm deps
+      command: yarn install chdir="{{install_dir}}/live"
+    - name: create cron scripts dir
+      become: true
+      file:
+        path: "{{install_dir}}/cron"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+    - name: install cron scripts
+      copy:
+        src: "templates/{{item}}"
+        dest: "{{install_dir}}/cron/{{item}}"
+        mode: 0774
+      with_items: "{{cronscripts}}"
+    - name: set up cron jobs
+      cron: >
+        name="{{item}}"
+        job="{{install_dir}}/cron/{{item}} >> {{install_dir}}/live/log/{{item}}.log 2>&1"
+        user=ubuntu
+        minute="5"
+        weekday="1"
+        state=present
+      with_items: "{{cronscripts}}"
+    - name: create scripts dir
+      become: true
+      file:
+        path: "{{install_dir}}/scripts"
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+    - name: install some useful scripts
+      copy:
+        src: "templates/{{item}}"
+        dest: "{{install_dir}}/scripts/{{item}}"
+        mode: 0774
+      with_items: "{{scripts}}"

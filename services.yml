@@ -1,0 +1,41 @@
+---
+- hosts: general
+  remote_user: ubuntu
+  tasks:
+    - include_vars: vars.yml
+    - name: copy production variables
+      copy:
+        src: files/env.production
+        dest: "{{install_dir}}/live/.env.production"
+    - name: copy nginx config
+      become: true
+      template:
+        src: templates/nginx.conf
+        dest: "/etc/nginx/sites-enabled/{{hostname}}"
+    - name: restart nginx
+      become: true
+      service: name=nginx state=restarted
+    - name: create upstart config
+      become: true
+      template:
+        src: "templates/mastodon-{{item}}.conf"
+        dest: "/etc/init/mastodon-{{item}}.conf"
+      with_items: "{{services}}"
+    - name: enable all upstart services
+      become: true
+      with_items: "{{services}}"
+      service:
+        name: "mastodon-{{item}}"
+        enabled: yes
+    - name: stop them all
+      become: true
+      with_items: "{{services}}"
+      service:
+        name: "mastodon-{{item}}"
+        state: stopped
+    - name: start them all
+      become: true
+      with_items: "{{services}}"
+      service:
+        name: "mastodon-{{item}}"
+        state: started

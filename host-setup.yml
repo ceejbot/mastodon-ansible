@@ -1,0 +1,62 @@
+---
+- hosts: general
+  remote_user: ubuntu
+  tasks:
+    - include_vars: vars.yml
+    - name: set readable host name
+      become: true
+      hostname: name="{{inventory_hostname}}"
+
+    - name: nginx ppa
+      become: true
+      apt_repository: >
+        repo='ppa:nginx/stable'
+        state=present
+    - name: ffmpeg for trusty
+      become: true
+      apt_repository: >
+        repo='ppa:mc3man/trusty-media'
+        state=present
+    - name: brightbox's ppa for ruby
+      become: true
+      apt_repository: >
+        repo='ppa:brightbox/ruby-ng'
+        state=present
+
+    - name: node ppa
+      become: true
+      shell: curl -sL https://deb.nodesource.com/setup_{{node_version}}.x | sudo bash -
+    - name: install node
+      become: true
+      apt: pkg={{item}}={{node_version}}* force=true update_cache=yes
+      with_items:
+        - nodejs
+        - nodejs-dbg
+    - name: npm install some things
+      become: true
+      command: "npm install -g npm@latest json@latest json-diff@latest yarn"
+
+    - name: install all apt packages
+      become: true
+      apt: pkg={{item}} state=present force=true update_cache=yes
+      with_items: "{{packages}}"
+
+    - name: create cert dir
+      become: true
+      file:
+        path: "{{install_dir}}/certs"
+        state: directory
+        mode: 0600
+    - name: copy TLS certs
+      become: true
+      copy:
+        src: "../certs/{{item}}"
+        dest: "/{{install_dir}}/certs/{{item}}"
+        mode: 0600
+      with_items:
+        - "{{hostname}}.pem"
+        - "{{hostname}}.key"
+
+    - name: install bundler
+      become: true
+      command: gem install bundler

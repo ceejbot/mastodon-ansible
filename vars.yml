@@ -1,0 +1,36 @@
+## you'll probably want to edit these
+
+hostname: yourserver.tld
+install_dir: /mnt/mastodon
+local_certs: /local/path/to/your/certs
+git_repo: https://github.com/Gargron/mastodon.git
+
+## unlikely to edit these
+
+node_version: 6
+services:
+  - web
+  - sidekiq
+  - streaming
+packages:
+  - ack-grep
+  - build-essential
+  - ffmpeg
+  - git
+  - imagemagick
+  - libpq-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - nginx
+  - postgresql
+  - postgresql-contrib
+  - redis-server
+  - redis-tools
+  - ruby2.3
+  - ruby2.3-dev
+cronscripts:
+  - clear-feeds.sh
+  - clear-media.sh
+  - refresh-push.sh
+scripts:
+  - checkout.sh
