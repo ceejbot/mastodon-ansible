@@ -28,7 +28,7 @@
         owner: ubuntu
         group: ubuntu
     - name: install cron scripts
-      copy:
+      template:
         src: "templates/{{item}}"
         dest: "{{install_dir}}/cron/{{item}}"
         mode: 0774
@@ -50,7 +50,7 @@
         owner: ubuntu
         group: ubuntu
     - name: install some useful scripts
-      copy:
+      template:
         src: "templates/{{item}}"
         dest: "{{install_dir}}/scripts/{{item}}"
         mode: 0774
