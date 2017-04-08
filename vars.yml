@@ -12,6 +12,11 @@ services:
   - web
   - sidekiq
   - streaming
+ppas:
+  - ppa:brightbox/ruby-ng
+  - ppa:git-core/ppa
+  - ppa:mc3man/trusty-media
+  - ppa:nginx/stable
 packages:
   - ack-grep
   - build-essential

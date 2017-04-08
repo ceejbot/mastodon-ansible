@@ -7,21 +7,10 @@
       become: true
       hostname: name="{{inventory_hostname}}"
 
-    - name: nginx ppa
+    - name: add ppas
       become: true
-      apt_repository: >
-        repo='ppa:nginx/stable'
-        state=present
-    - name: ffmpeg for trusty
-      become: true
-      apt_repository: >
-        repo='ppa:mc3man/trusty-media'
-        state=present
-    - name: brightbox's ppa for ruby
-      become: true
-      apt_repository: >
-        repo='ppa:brightbox/ruby-ng'
-        state=present
+      apt_repository: repo="{{item}}" state=present
+      with_items: "{{ppas}}"
 
     - name: node ppa
       become: true

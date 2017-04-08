@@ -2,12 +2,12 @@
 
 Install [Mastodon](https://github.com/Tootsuite/mastodon) on Ubuntu Trusty with upstart instead of anything more recent and [insert muttering here].
 
-A work in progress as I make this more like a typical ansible role instead of a set of one-off playbooks.
+A work in progress as I make this more like a typical ansible role instead of a set of one-off playbooks. Seems to work just fine (I'm using this for my own instance, at least).
 
 1. Clone this repo. Edit the [vars.yml](vars.yml) file.
 1. Register a domain name. Buy a cert for it.
 1. Spin up Ubuntu Trusty 14.04 on AWS & point DNS at the instance. Don't bother making user accounts or anything; only somebody with your key should be able to ssh in. Add security group rules allowing https from anywhere, or maybe http if you want to redirect.
-1. Make an EBS volume or raid up some instance stores and mount them on `/mnt/mastodon`, owned by ubuntu.
+1. Make an EBS volume or raid up some instance stores and mount them on `{{install_dir}}`, owned by ubuntu.
 1. Clone this repo.
 1. Edit the `inventory` file to replace the hostname with your name. This is just to make running the playbooks easier.
 1. Edit the [vars.yml](vars.yml) file.
