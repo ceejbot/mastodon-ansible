@@ -4,6 +4,7 @@ hostname: yourserver.tld
 install_dir: /mnt/mastodon
 local_certs: /local/path/to/your/certs
 git_repo: https://github.com/Gargron/mastodon.git
+ruby_version: 2.4.1
 
 ## unlikely to edit these
 
@@ -31,10 +32,10 @@ packages:
   - postgresql-contrib
   - redis-server
   - redis-tools
-  - ruby2.3
-  - ruby2.3-dev
   - protobuf-compiler
   - libprotobuf-dev
+  - libreadline-dev
+  - rbenv
 cronscripts:
   - clear-feeds.sh
   - clear-media.sh
